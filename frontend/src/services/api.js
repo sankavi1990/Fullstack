@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 const API = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api',
+  baseURL: 'https://sankavi.pythonanywhere.com/api',
   headers: {
-    'Content-Type': 'application/json',   // ← ADD THIS
+    'Content-Type': 'application/json',
   }
 })
 
@@ -15,5 +15,20 @@ API.interceptors.request.use((config) => {
   }
   return config
 })
+
+// Auto clear token if 401 received
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear expired token automatically
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
+      // Redirect to login
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
+)
 
 export default API

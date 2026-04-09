@@ -17,6 +17,10 @@ function LoginPage() {
     setLoading(true)
     setError('')
 
+    // Clear any old tokens first
+    localStorage.removeItem('access_token')      // ← ADD THIS
+    localStorage.removeItem('refresh_token')     // ← ADD THIS
+
     try {
       const response = await API.post('/auth/login/', formData, {
         headers: {
